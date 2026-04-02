@@ -1,0 +1,47 @@
+<?php 
+
+	// http://cc33953.tmweb.ru/php/frmwr.php
+
+	$data;
+	if(isset($_GET['d'])) $data = $_GET['d']; // Достаём переменную из GET запроса
+
+	$filename = 'http://cc33953.tmweb.ru/other/bin/STM32_500.bin'; // Ссылка на файл прошивки
+
+	$tmp = get_headers($filename, true);
+	$size = isset($tmp['Content-Length'])?(int) $tmp['Content-Length']:0; // Размер файла прошивки в байтах
+
+	$count = ceil($size / 108); 		// Кол-во итераций с округлением в большую сторону
+	$remains = ($count * 108) - $size; 	// Лишние байты
+  
+	// Собираем размер файла и кол-во итераций (необходимый вид 220 символов)
+	if($data == 0){
+    	$arrsize = "=" . "FFF" . $size . "A" . $count;
+		for($i = strlen($arrsize); $i < 220; $i++) {
+    		$arrsize = $arrsize . "F";
+    	}
+		echo $arrsize; // Отправляем
+    }
+
+	// Собираем нагрузку
+	if($data != 0){
+      	$arr = "=" . "FFF";
+		$hex = unpack("H*", file_get_contents($filename));
+		$hex = current($hex);
+      	$data--;
+		if($data+1 != $count) {  // Нагрузка всех пакетов кроме последнего
+			for ($i = 1+($data*216); $i <= 216+($data*216); $i++) {
+    			$arr = $arr . $hex[$i-1];
+			}
+		}
+		if($data+1 == $count) { // Нагрузка последнего пакета
+			for ($i = 1+($data*216); $i <= (216+($data*216))-$remains; $i++) {
+				$arr = $arr . $hex[$i-1];
+			}
+      		for($i = strlen($arr); $i < 220; $i++) {
+    			$arr = $arr . "0";
+    		}
+		}
+		echo $arr;  // Отправляем нагрузку
+    }
+
+?>

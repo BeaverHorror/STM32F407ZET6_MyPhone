@@ -1,0 +1,97 @@
+<?php 
+
+	// http://cc33953.tmweb.ru/php/frmwr.php
+
+	$data;
+	if(isset($_GET['d'])) $data = $_GET['d']; // Достаём переменную из GET запроса
+
+	$filename = 'http://cc33953.tmweb.ru/other/bin/STM32_500.bin'; // Ссылка на файл прошивки
+
+	$tmp = get_headers($filename, true);
+	$size = isset($tmp['Content-Length'])?(int) $tmp['Content-Length']:0; // Размер файла прошивки в байтах
+
+	$count = ceil($size / 100); 		// Кол-во итераций с округлением в большую сторону
+	$remains = ($count * 100) - $size; 	// Лишние байты
+	$checksum = 0;
+	$checksumStr = "";
+  
+	// Собираем размер файла и кол-во итераций (необходимый вид 220 символов)
+	if($data == 0){
+      	// Нагрузка с размером файла и кол-вом итераций
+      	$arrsize = $size . "A" . $count;
+      
+      	// Заполняем остаток
+        while(strlen($arrsize) < 200) { 
+        	$arrsize = $arrsize . "F"; 
+        }
+      
+      	// Вычисляем контрольную сумму
+		for($i = 0; $i < 200; $i+=2){
+          	$checksum = $checksum + hexdec($arrsize[$i] . $arrsize[$i+1]);
+        }
+		$checksum /= 100;
+      	$checksumStr = (string)$checksum;
+      
+       	// Если длина контрольной суммы > 19 символов 
+      	while(strlen($checksumStr) > 19) {
+            $checksumStr = substr($checksumStr,0,-1); 
+        }
+      	// Если длина контрольной суммы < 19 символов
+      	while(strlen($checksumStr) < 19) { 
+            $checksumStr = $checksumStr . "F"; 
+        }
+      
+      	// Собираем нагрузку
+    	$arrsize = "=" . $checksumStr . $arrsize;
+
+		echo $arrsize; // Отправляем
+    }
+
+	// Собираем нагрузку
+	if($data != 0){
+		$hex = unpack("H*", file_get_contents($filename));
+		$hex = current($hex);
+      
+      	$arr;
+      	$data--;
+      
+      	// Нагрузка всех пакетов кроме последнего
+		if($data+1 != $count) {
+			for ($i = 1+($data*200); $i <= 200+($data*200); $i++) {
+    			$arr = $arr . $hex[$i-1];
+			}
+		}
+      
+      	// Нагрузка последнего пакета
+		if($data+1 == $count) {
+			for ($i = 1+($data*200); $i <= (200+($data*200))-$remains; $i++) {
+				$arr = $arr . $hex[$i-1];
+			}
+          	// Заполняем остаток
+          	while(strlen($arr) < 200) { 
+              	$arr = $arr . "0"; 
+            }
+		}
+      
+      	// Вычисляем контрольную сумму
+		for($i = 0; $i < 200; $i+=2){
+          	$checksum = $checksum + hexdec($arr[$i] . $arr[$i+1]);
+        }
+		$checksum /= 100;
+      	$checksumStr = (string)$checksum;
+      
+      	// Если длина контрольной суммы > 19 символов 
+      	while(strlen($checksumStr) > 19) {
+            $checksumStr = substr($checksumStr,0,-1); 
+        }
+      	// Если длина контрольной суммы < 19 символов
+      	while(strlen($checksumStr) < 19) { 
+            $checksumStr = $checksumStr . "F"; 
+        }
+		
+      	$arr = "=" . $checksumStr . $arr;
+		
+		echo $arr;  // Отправляем нагрузку
+    }
+
+?>

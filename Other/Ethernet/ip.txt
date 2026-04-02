@@ -1,0 +1,10 @@
+Если компьютер в другой подсети (например, 192.168.0.x)
+Способ 1: Изменить IP компьютера (временно)
+
+Windows:
+cmd
+netsh interface ip set address "Ethernet" static 192.168.1.50 255.255.255.0 192.168.1.1
+
+Чтобы вернуть обратно (DHCP):
+cmd
+netsh interface ip set address "Ethernet" dhcp

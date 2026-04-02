@@ -1,0 +1,127 @@
+						// Инициализация GPRS
+
+AT+SAPBR=3,1,"CONTYPE","GPRS"			// Установка настроек подключения
+AT+SAPBR=3,1,"APN","internet.beeline.ru"	// APN
+AT+SAPBR=3,1,"USER","beeline"			// Имя пользователя
+AT+SAPBR=3,1,"PWD","beeline"			// Пароль
+AT+SAPBR=1,1					// Устанавливаем GPRS соединение
+AT+HTTPINIT					// Инициализация http сервиса
+AT+HTTPPARA="CID",1				// Установка CID параметра для http сессии
+
+						// Работа с сервером
+
+AT+HTTPPARA="URL","http://cc33953.tmweb.ru/php/frmwr.php?d=0"
+AT+HTTPACTION=0
+AT+HTTPREAD
+
+
+
+// Инициализация MQTT (MQTT_Init)
+AT
+ATE0
+AT+CIPSHUT
+AT+CGATT=1
+AT+CIPMODE=1
+AT+CSTT="internet.beeline.ru","beeline","beeline"
+AT+CIICR
+AT+CIFSR
+
+// (MQTT_Connect)
+AT+CIPSTART="TCP","88.87.77.90","1883"
+
+
+
+
+
+health/00:12:1b:c9:b1:c6
+[
+{
+	"ts":1657535977000,
+	"status":"RN",
+	"hw_version":"0001",
+	"base": 
+	{
+		"status":"",
+		"GSM":"Op: Beeline, RSSI: -75dBm, BER: 0.100000%",
+		"versions": 
+		{
+			"hw_version":"0001",
+			"fw_version":"NO",
+			"fw_bckup_stable_version":"NO",
+			"fw_status":"FC"
+		},
+		"data":
+		{
+			"brd_temp":28.000000,
+			"voltage":12.382000,
+			"uptime":178330,
+			"rf_status":""
+		}
+	},
+	"cab": 
+	{
+		"status":"DO,"
+	},
+	"ru2":
+	{
+		"status":"",
+		"b1":
+		{
+			"voltage":0.000000,
+			"value_charge":20.000000
+		},
+		"brd_temp":0,
+		"channel_occup_attempt": 0,
+		"sessions_nak":0,
+		"ru_ltota":0,
+		"ru_rssi":0,
+		"rf_ru_rssi":0
+	},
+  	"anem": 
+	{
+		"temp":0.000000,
+		"status":"WDL"
+	},
+  	"t_hum": 
+	{
+		"status":"THDL"
+	},
+	"hs":"7ac6db618181e0750f4c6707b672ac9c"
+}
+]
+
+
+telemetry/00:12:1b:c9:b1:c6
+[
+{
+	"ts":1657535977000,
+	"ms":
+	{
+       		"ru1":{"force":-99999,"temp":-2000,"ts":0},
+       		"ru2":{"force":-99999,"temp":-2000,"ts":0},
+       		"ru3":{"force":-99999,"temp":-2000,"ts":0},
+       		"meteo":{"airt":0.000000,"ah":0,"wd":0,"ws":0.000000}
+	},
+	"hs":"7ac6db618181e0750f4c6707b672ac9c"
+}
+]
+
+
+
+
+
+
+
+/*
+AT
+OK
+AT+CMGF=1
+OK
+AT+CMGS="+79610699024"
+> Hello
+&
+
+41 54 0A
+41 54 2B 43 4D 47 46 3D 31 0A
+41 54 2B 43 4D 47 53 3D 22 2B 37 39 36 31 30 36 39 39 30 32 34 22 0A
+*/
