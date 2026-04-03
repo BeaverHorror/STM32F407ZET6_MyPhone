@@ -3,6 +3,8 @@
 
 ![image](https://github.com/BeaverHorror/STM32F407ZET6_MyPhone/blob/main/Media/IMG_20260402_200945.jpg)
 
+![image](https://github.com/BeaverHorror/STM32F407ZET6_MyPhone/blob/main/Media/IMG_20260402_200609.jpg)
+
 Давно хотел проявить себя в разработке печатных плат и это мой первый, во многом неудачный, опыт.
 
 Фото и видео работы смотри в папке Media. Работа с модулями SIM800, LoRa, W5200 и многими другими там не показана, но я там всего лишь демонстрирую идею.
